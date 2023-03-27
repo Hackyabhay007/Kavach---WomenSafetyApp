@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:icon="@drawable/home_svgrepo_com"
+        android:title="Home"/>
+    <item
+        android:id="@+id/dialer"
+        android:enabled="true"
+        android:icon="@drawable/phone_call_svgrepo_com"
+        android:title="Dialer"/>
+    <item
+        android:id="@+id/profile"
+        android:enabled="true"
+        android:icon="@drawable/profile_tick_svgrepo_com"
+        android:title="Profile"/>
+
+    <item
+        android:id="@+id/setting"
+        android:enabled="true"
+        android:icon="@drawable/setting_2_svgrepo_com"
+        android:title="Setting"/>
+
+
+</menu>
