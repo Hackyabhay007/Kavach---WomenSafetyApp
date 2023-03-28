@@ -66,12 +66,9 @@ public class Login_Page extends AppCompatActivity {
         });
 
 
-        redirect_register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Login_Page.this, register.class);
-                startActivity(intent);
-            }
+        redirect_register.setOnClickListener(v -> {
+            Intent intent = new Intent(Login_Page.this, register.class);
+            startActivity(intent);
         });
 
     }

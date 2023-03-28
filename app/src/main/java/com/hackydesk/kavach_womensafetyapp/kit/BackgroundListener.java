@@ -1,13 +1,8 @@
 package com.hackydesk.kavach_womensafetyapp.kit;
-
-
-import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -25,15 +20,19 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-
+import androidx.lifecycle.Observer;
+import androidx.work.Configuration;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.hackydesk.kavach_womensafetyapp.Home;
 import com.hackydesk.kavach_womensafetyapp.R;
-
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class BackgroundListener extends Service implements RecognitionListener, SensorEventListener {
     private SpeechRecognizer speechRecognizer;
@@ -55,7 +54,6 @@ public class BackgroundListener extends Service implements RecognitionListener, 
 
     private static final int REQUEST_RECORD_PERMISSION = 100;
     private int maxLinesInput = 10;
-
     private SpeechRecognizer speech = null;
     private String LOG_TAG = "VoiceRecognitionActivity";
     boolean listening = false;
@@ -63,7 +61,6 @@ public class BackgroundListener extends Service implements RecognitionListener, 
     @Override
     public void onCreate() {
         super.onCreate();
-
         listening = true;
         start();
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -186,7 +183,6 @@ public class BackgroundListener extends Service implements RecognitionListener, 
         Log.i(LOG_TAG, "onResults="+text);
         Toast.makeText(BackgroundListener.this, text, Toast.LENGTH_SHORT).show();
         // speech.startListening(recognizerIntent);
-
     }
 
     @Override
@@ -264,33 +260,31 @@ public class BackgroundListener extends Service implements RecognitionListener, 
             if (mShakeTimestamp + SHAKE_SLOP_TIME_MS > now) {
                 return;
             }
-
             // reset the shake count after 3 seconds of no shakes
             if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
                 mShakeCount = 0;
             }
-
             mShakeTimestamp = now;
             mShakeCount++;
-            if (mShakeCount>2) {
+            if (mShakeCount>3) {
                 shakeEvent();
                 mShakeCount=0;
             }
-
         }
     }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Not implemented
     }
-
     private void shakeEvent()
     {
         Toast.makeText(BackgroundListener.this, "Shake Event Starting Sos ", Toast.LENGTH_SHORT).show();
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone r = RingtoneManager.getRingtone(BackgroundListener.this, notification);
         r.play();
+         Intent serviceIntent = new Intent(BackgroundListener.this,DangerModeService.class);
+        BackgroundListener.this.startForegroundService(serviceIntent);
+        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
 
     }
     @Override

@@ -9,12 +9,15 @@ import android.os.Handler;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 private  int DELAY = 1000;
+    private static final int TIME_INTERVAL = 2000; // Time interval for double back press in milliseconds
+    private long backPressedTime;
 
     EditText fname , email , phonenumber , aadhar,password;    @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +36,19 @@ private  int DELAY = 1000;
                 startActivity(intent);
             }
             else {
-                Intent intent = new Intent(MainActivity.this, Login_Page.class);
+                Intent intent = new Intent(MainActivity.this, firsttime.class);
                 startActivity(intent);
             }
         }, DELAY);
 
+    }
+    public void onBackPressed() {
+        if (backPressedTime + TIME_INTERVAL > System.currentTimeMillis()) {
+            super.onBackPressed();
+            return;
+        } else {
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+        backPressedTime = System.currentTimeMillis();
     }
 }

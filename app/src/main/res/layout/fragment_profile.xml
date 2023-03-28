@@ -113,7 +113,7 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="10dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:id="@+id/profile_email_label"
@@ -150,7 +150,7 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="10dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:id="@+id/textVierergrfrww11"
@@ -183,7 +183,7 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="10dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:id="@+id/textView11"

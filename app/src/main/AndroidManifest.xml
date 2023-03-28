@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -11,15 +13,17 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Permission for camera -->
+    <!-- Permission to vibrate -->
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <queries>
         <package android:name="com.google.android.googlequicksearchbox" />
     </queries>
-
-
 
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
@@ -34,10 +38,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KawatchWomenSafetyKit"
         tools:targetApi="31">
+        <activity
+            android:name=".DceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CameraXActivity"
+            android:exported="false" />
+        <activity
+            android:name=".police_dashboard"
+            android:exported="true" />
+        <activity
+            android:name=".PoliceMode"
+            android:exported="true" />
+        <activity
+            android:name=".firsttime"
+            android:exported="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDC8VgCougGk-CNl9pq5-vM7ul4ZoeASm8" />
+
         <activity
             android:name=".Home"
             android:exported="true" />
@@ -66,8 +86,7 @@
         <service
             android:name=".kit.DangerModeService"
             android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="location"
+            android:exported="true"
             android:launchMode="singleTop"
             android:permission="TODO" />
 
@@ -76,6 +95,19 @@
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped" />
+
+        <service
+            android:name=".kit.DangerModeBackgroundListener"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibilityservice" />
+        </service>
     </application>
 
 </manifest>

@@ -93,7 +93,7 @@
                         android:background="?android:attr/listDivider" />
 
                     <Switch
-                        android:id="@+id/switch3"
+                        android:id="@+id/rapidsos"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"

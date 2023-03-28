@@ -1,46 +1,87 @@
 package com.hackydesk.kavach_womensafetyapp;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.view.SurfaceView;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.Settings;
-import android.widget.Toast;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.hackydesk.kavach_womensafetyapp.kit.BackgroundListener;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.Preview;
+import androidx.camera.core.ZoomState;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 
-public class Home extends AppCompatActivity {
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.ImageFormat;
+import android.graphics.RectF;
+import android.media.Image;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.widget.TextView;
+import android.widget.Toast;
+
+
+import com.google.common.util.concurrent.ListenableFuture;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+
+
+public class PoliceMode extends AppCompatActivity    {
+
+    private static final int REQUEST_CAMERA_PERMISSION = 201;
+
 
     ArrayList<String> permissionsList;
-    String[] permissionsStr = {android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.CALL_PHONE, android.Manifest.permission.POST_NOTIFICATIONS, android.Manifest.permission.RECORD_AUDIO};
-    int permissionsCount = 0;
-    private static final int TIME_INTERVAL = 2000; // Time interval for double back press in milliseconds
-    private long backPressedTime;
     AlertDialog alertDialog;
-    // The following are used for the shake detection
-    private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
+    String[] permissionsStr = {Manifest.permission.CAMERA,android.Manifest.permission.CALL_PHONE};
+    int permissionsCount = 0;
 
     ActivityResultLauncher<String[]> permissionsLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
@@ -72,61 +113,21 @@ public class Home extends AppCompatActivity {
                         }
                     });
 
-    BottomNavigationView bottomNavigationView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        setTitle("KAVATCH - Safety Kit");
+        setContentView(R.layout.activity_police_mode);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        //starts background service
-        startBackgroundListener();
-        //shek detector
         permissionsList = new ArrayList<>();
         permissionsList.addAll(Arrays.asList(permissionsStr));
         //ask for permissions
         askForPermissions(permissionsList);
-        bottomNavigationView =findViewById(R.id.bottom_navigation);
-
-        Fragment main_home = new Main_home();
-        Fragment settings = new Setting();
-        Fragment emergencydailer = new Dialer();
-        Fragment profile = new Profile();
-        fragloader(main_home, 0);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            // do stuff
-            switch (item.getItemId()) {
-                case R.id.home:
-                    fragloader(main_home, 1);
-                    return true;
-                case R.id.dialer:
-                    fragloader(emergencydailer, 1);
-                    return true;
-                case R.id.profile:
-                    fragloader(profile, 1);
-                    return true;
-                case R.id.setting:
-                    fragloader(settings,0);
-                    return true;
-
-            }
-            return false;
-        });
-    }
 
 
-    void  fragloader(Fragment fragment , int flag)
-    {
-        FragmentManager fm =getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        if(flag==0)
-            ft.replace(R.id.fragmentContainerView,fragment).commit();
-        else
-            ft.replace(R.id.fragmentContainerView,fragment).commit();
+
     }
 
     private void askForPermissions(ArrayList<String> permissionsList) {
@@ -146,21 +147,20 @@ public class Home extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(getBaseContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getBaseContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(Home.this);
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(PoliceMode.this);
             builder1.setTitle("Location Permission Needed");
             builder1.setMessage("Location will be Used to Sync location with server in background only  when SOS MODE OR SHARE JOURNEY MODE are at running State. You Can Stop Them Easily By Stop Button in Home Section,  guardian can get your location and other device details when You allow them. location will be used for SOS feature ,Review Area feature  and SHARE JOURNEY  feature only ");
             builder1.setIcon(R.drawable.female_avatar_girl_face_woman_user_2_svgrepo_com);
             builder1.create();
 
             builder1.setPositiveButton("Allow", (dialog, which) -> {
-                ActivityCompat.requestPermissions(Home.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                ActivityCompat.requestPermissions(PoliceMode.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                 dialog.cancel();
-            }).setNegativeButton("Close ", (dialog, which) -> Toast.makeText(Home.this, "Permission Denied", Toast.LENGTH_SHORT).show());
+            }).setNegativeButton("Close ", (dialog, which) -> Toast.makeText(PoliceMode.this, "Permission Denied", Toast.LENGTH_SHORT).show());
             AlertDialog alert2 = builder1.create();
             alert2.show();
         }
     }
-
     private boolean hasPermission(Context context, String permissionStr) {
         return ContextCompat.checkSelfPermission(context, permissionStr) == PackageManager.PERMISSION_GRANTED;
     }
@@ -188,25 +188,5 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    private void startBackgroundListener() {
-        Intent serviceIntent = new Intent(getApplicationContext(),BackgroundListener.class);
-        startService(serviceIntent);
-        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-       stopService(new Intent(getApplicationContext(), BackgroundListener.class));
-    }
-
-    public void onBackPressed() {
-        if (backPressedTime + TIME_INTERVAL > System.currentTimeMillis()) {
-            super.onBackPressed();
-            return;
-        } else {
-            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
-        }
-        backPressedTime = System.currentTimeMillis();
-    }
 }

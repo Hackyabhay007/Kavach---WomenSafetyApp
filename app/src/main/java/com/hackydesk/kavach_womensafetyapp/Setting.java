@@ -1,64 +1,130 @@
 package com.hackydesk.kavach_womensafetyapp;
 
+import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Setting#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.hackydesk.kavach_womensafetyapp.kit.DangerModeBackgroundListener;
+
+
 public class Setting extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    Switch speechRecognition;
+    Switch rapidsos;
+    Switch shakeToActivate;
+    boolean accessibilityServiceEnabled;
+    SharedPreferences sharedPreferences ;
+    SharedPreferences.Editor prefeditor;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public Setting() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment settings.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Setting newInstance(String param1, String param2) {
-        Setting fragment = new Setting();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    View rootView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        sharedPreferences = getContext().getSharedPreferences("KAVACH_DATABASE", Context.MODE_PRIVATE);
+        prefeditor = sharedPreferences.edit();
+         accessibilityServiceEnabled = isAccessibilityServiceEnabled(getContext(), DangerModeBackgroundListener.class);
+        rootView = inflater.inflate(R.layout.fragment_settings, container,false);
+        rapidsos = (Switch) rootView.findViewById(R.id.rapidsos);
+
+        rapidsos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rapidsos.isChecked())
+                {
+                    accessibiltyconsentpopup();
+                }
+                else{
+//                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+//                    startActivity(intent);
+                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                    startActivity(intent);
+
+                    Toast.makeText(getContext(), "Find The Saviour App And Turn Off Accessibility Permission", Toast.LENGTH_SHORT).show();
+                    prefeditor.putBoolean("RAPID_SOS",false);
+                }
+                prefeditor.apply();
+            }
+        });
+        return rootView;
+    }
+
+    void accessibiltyconsentpopup()
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder((getContext()));
+        builder.setTitle("Accessibility Permission Needed");
+        builder.setMessage("Don't Worry We Are not  Collecting Any Data with This Permission It Will  Only Access Volume Up Button Events By Which You Can Activate Sos Mode Without Opening App To Turn Off Permission Use Rapid Sos Switch Again ");
+        builder.setIcon(R.drawable.female_avatar_girl_face_woman_user_2_svgrepo_com);
+        builder.setPositiveButton("Allow", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivity(intent);
+
+                Toast.makeText(getContext(), "Find The Kavach App And Activate Accessibility Permission", Toast.LENGTH_SHORT).show();
+
+                prefeditor.putBoolean("RAPID_SOS",true);
+                rapidsos.setChecked(true);
+            }
+        }).setNegativeButton("Close ", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                rapidsos.setChecked(false);
+                prefeditor.putBoolean("RAPID_SOS",false);
+            }
+        });
+        prefeditor.apply();
+        builder.show();
+    }
+
+    void LoadLastState()
+    {
+     //   skipsplash.setChecked(sharedPreferences.getBoolean("SKIP_SPLASH",false));
+        // rapidsos.setChecked(sharedPreferences.getBoolean("RAPID_SOS",false));
+
+        if (accessibilityServiceEnabled)
+        {
+            rapidsos.setChecked(true);
+        }
+        else {
+            rapidsos.setChecked(false);
+        }
+    }
+    public static boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {
+        ComponentName expectedComponentName = new ComponentName(context, accessibilityService);
+        String enabledServicesSetting = Settings.Secure.getString(context.getContentResolver(),  Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        if (enabledServicesSetting == null)
+            return false;
+        TextUtils.SimpleStringSplitter colonSplitter = new TextUtils.SimpleStringSplitter(':');
+        colonSplitter.setString(enabledServicesSetting);
+        while (colonSplitter.hasNext()) {
+            String componentNameString = colonSplitter.next();
+            ComponentName enabledService = ComponentName.unflattenFromString(componentNameString);
+            if (enabledService != null && enabledService.equals(expectedComponentName))
+                return true;
+        }
+        return false;
     }
 }
