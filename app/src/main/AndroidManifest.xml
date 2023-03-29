@@ -39,7 +39,7 @@
         android:theme="@style/Theme.KawatchWomenSafetyKit"
         tools:targetApi="31">
         <activity
-            android:name=".DceActivity"
+            android:name=".EmailActivity"
             android:exported="false" />
         <activity
             android:name=".CameraXActivity"

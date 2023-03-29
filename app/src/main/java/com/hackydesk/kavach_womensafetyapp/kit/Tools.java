@@ -5,7 +5,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -118,5 +120,14 @@ public class Tools {
         }
         return false;
     }
+    public void getdirections(double lat, double lng) {
+        //Create a Uri for passing to the intent
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        //Start the intent to get directions
+        activity.startActivity(mapIntent);
+    }
+
 
 }
