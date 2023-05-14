@@ -63,36 +63,4 @@ The following technologies were used to develop the web-based application:
 
 * **APIs**: QR Code API and Google Maps API were used to integrate QR code scanning and maps and location-based services.
 
-## Usage
-
-To use this project, follow the instructions below:
-
-1. Clone the repository to your local machine using the command: `git clone [repository URL]`.
-
-2. Install the required dependencies using the command: `npm install`.
-
-3. Start the application using the command: `npm start`.
-
-4. Use the mobile application to trigger an SOS in case of an emergency situation.
-
-5. The nearest police station dashboard will receive a notification with the woman's details.
-
-6. Scanning the QR Code provided by the dashboard enables the police to retrieve the woman's information on their mobiles, making tracking easier.
-
-## Contributing
-
-To contribute to this project, follow the steps below:
-
-1. Fork the repository to your own GitHub account.
-
-2. Create a new branch with a descriptive name for your changes: `git checkout -b descriptive-branch-name`.
-
-3. Make changes to the codebase and commit them with descriptive commit messages.
-
-4. Push your changes to your forked repository: `git push origin descriptive-branch-name`.
-
-5. Create a pull request from your forked repository to the original repository.
-
-6. Wait for your changes to be reviewed and merged into the main branch.
-
 
