@@ -1,4 +1,4 @@
-# Kavach---WomenSafetyApp
+# Kavach -WomenSafetyApp
 
 kavach is a personal safety application designed to address the critical issue of women's safety in today's world. This project provides a comprehensive safety kit comprising two applications: a mobile application for clients and police and a web application for the police.
 
