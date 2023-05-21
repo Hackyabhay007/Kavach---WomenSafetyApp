@@ -3,18 +3,19 @@
 kavach is a personal safety application designed to address the critical issue of women's safety in today's world. This project provides a comprehensive safety kit comprising two applications: a mobile application for clients and police and a web application for the police.
 
 
-<div align="center">
+<div align="">
   <h2>Screenshots</h2>
-  <div style="overflow-x: auto; white-space: nowrap; margin: 20px 0;">
-    <img src="https://i.imgur.com/h48SEf0.jpg" alt="Screenshot 1" style="width: 30%; margin-right: 10px;">
-    <img src="https://i.imgur.com/d834c1o.jpg" alt="Screenshot 2" style="width: 30%; margin-right: 10px;">
-    <img src="https://imgur.com/b0f5de46-5fa2-4af3-b22c-9893ab4d994d" alt="Screenshot 3" style="width: 30%; margin-right: 10px;">
-    <img src="https://imgur.com/27da6a6b-8410-4a1d-9a95-efd56fd5fdeb" alt="Screenshot 4" style="width: 30%; margin-right: 10px;">
-    <img src="https://imgur.com/31bd8202-aeb3-4e59-a53c-bcaa009d7049" alt="Screenshot 5" style="width: 30%; margin-right: 10px;">
-    <img src="https://imgur.com/f7455c91-127f-4fac-8a2e-7891803afa5b" alt="Screenshot 6" style="width: 30%; margin-right: 10px;">
-    <img src="https://imgur.com/c1c96f09-f6ad-4f1d-8d20-9fde0b98dc02" alt="Screenshot 7" style="width: 30%; margin-right: 10px;">
+  <div style="display: flex; overflow-x: auto; margin: 20px 0;">
+    <img src="https://i.imgur.com/h48SEf0.jpg" alt="Screenshot 1" style="flex: 0 0 auto; width: 30%; margin-right: 10px;">
+    <img src="https://i.imgur.com/d834c1o.jpg" alt="Screenshot 2" style="flex: 0 0 auto; width: 30%; margin-right: 10px;">
+    <img src="https://i.imgur.com/1YkRkQ1.jpg" alt="Screenshot 3" style="flex: 0 0 auto; width: 30%; margin-right: 10px;">
+    <img src="https://i.imgur.com/sDqreiD.jpg" alt="Screenshot 4" style="flex: 0 0 auto; width: 30%; margin-right: 10px;">
+    <img src="https://i.imgur.com/w1ct7tR.jpg" alt="Screenshot 5" style="flex: 0 0 auto; width: 30%; margin-right: 10px;">
+    <img src="https://i.imgur.com/7061M6y.jpg" alt="Screenshot 6" style="flex: 0 0 auto; width: 30%; margin-right: 10px;">
+    <img src="https://i.imgur.com/pWXZTr4.jpg" alt="Screenshot 7" style="flex: 0 0 auto; width: 30%; margin-right: 10px;">
   </div>
 </div>
+
 
 
 ## Features
